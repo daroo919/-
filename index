@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+
+  <title>夕停.</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      width:100%;
+      height:100vh;
+      overflow:hidden;
+
+      font-family:'Pretendard', sans-serif;
+
+      background:#0f172a;
+      color:white;
+
+      position:relative;
+    }
+
+    /* 배경 */
+
+    .background{
+      position:fixed;
+      inset:0;
+
+      background:
+      linear-gradient(
+        rgba(0,0,0,0.15),
+        rgba(0,0,0,0.35)
+      ),
+      url("./station.png");
+
+      background-size:cover;
+      background-position:center;
+
+      z-index:-5;
+
+      animation:bgFade 1.8s ease;
+    }
+
+    @keyframes bgFade{
+      from{
+        opacity:0;
+        transform:scale(1.03);
+      }
+
+      to{
+        opacity:1;
+        transform:none;
+      }
+    }
+
+    /* 어두운 오버레이 */
+
+    .overlay{
+      position:absolute;
+      inset:0;
+
+      background:
+      linear-gradient(
+        to top,
+        rgba(0,0,0,0.55),
+        rgba(0,0,0,0.1),
+        rgba(0,0,0,0.25)
+      );
+
+      z-index:-1;
+    }
+
+    /* 로고 */
+
+    .logo{
+      position:absolute;
+
+      top:34px;
+      left:42px;
+
+      font-size:44px;
+      font-weight:800;
+      letter-spacing:2px;
+
+      text-shadow:
+      0 4px 20px rgba(0,0,0,0.45);
+
+      animation:fadeUp 1s ease;
+    }
+
+    .dot{
+      color:#ffd36b;
+    }
+
+    /* 서브 텍스트 */
+
+    .sub{
+      position:absolute;
+
+      top:94px;
+      left:44px;
+
+      font-size:13px;
+      color:rgba(255,255,255,0.72);
+
+      letter-spacing:1px;
+
+      animation:fadeUp 1.2s ease;
+    }
+
+    /* 전광판 */
+
+    .display-board{
+      position:absolute;
+
+      top:11%;
+      left:50%;
+
+      transform:translateX(-50%);
+
+      width:340px;
+      height:100px;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      color:#ffd36b;
+
+      font-size:18px;
+      letter-spacing:1px;
+
+      text-shadow:
+      0 0 12px rgba(255,211,107,0.45);
+
+      transition:0.4s ease;
+
+      animation:flicker 4s infinite;
+    }
+
+    @keyframes flicker{
+
+      0%,100%{
+        opacity:1;
+      }
+
+      50%{
+        opacity:0.92;
+      }
+
+    }
+
+    /* 클릭 영역 */
+
+    .hotspot{
+      position:absolute;
+
+      cursor:pointer;
+
+      transition:
+      transform .35s ease,
+      filter .35s ease,
+      opacity .35s ease;
+    }
+
+    .hotspot:hover{
+      transform:scale(1.03);
+      filter:brightness(1.12);
+    }
+
+    /* 클릭 영역 위치 확인용 */
+    /*
+    .hotspot{
+      background:red;
+      opacity:0.2;
+    }
+    */
+
+    /* 설명 */
+
+    .label{
+      position:absolute;
+
+      left:50%;
+      bottom:-38px;
+
+      transform:translateX(-50%);
+
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+
+      opacity:0;
+
+      transition:0.3s ease;
+
+      pointer-events:none;
+    }
+
+    .hotspot:hover .label{
+      opacity:1;
+      bottom:-48px;
+    }
+
+    .title{
+      font-size:18px;
+      font-weight:700;
+
+      text-shadow:
+      0 2px 10px rgba(0,0,0,0.4);
+    }
+
+    .desc{
+      margin-top:4px;
+
+      font-size:12px;
+
+      color:rgba(255,255,255,0.72);
+    }
+
+    /* 게시판 */
+
+    .board{
+      left:13%;
+      top:28%;
+
+      width:24%;
+      height:29%;
+    }
+
+    /* 벤치 */
+
+    .bench{
+      left:20%;
+      bottom:14%;
+
+      width:28%;
+      height:22%;
+    }
+
+    /* 창구 */
+
+    .office{
+      right:9%;
+      top:23%;
+
+      width:24%;
+      height:48%;
+    }
+
+    /* 하단 문구 */
+
+    .bottom-message{
+      position:absolute;
+
+      bottom:28px;
+      left:50%;
+
+      transform:translateX(-50%);
+
+      font-size:13px;
+
+      color:rgba(255,255,255,0.56);
+
+      letter-spacing:1px;
+
+      animation:fade 2s ease;
+    }
+
+    /* 애니메이션 */
+
+    @keyframes fadeUp{
+
+      from{
+        opacity:0;
+        transform:translateY(12px);
+      }
+
+      to{
+        opacity:1;
+        transform:none;
+      }
+
+    }
+
+    @keyframes fade{
+
+      from{
+        opacity:0;
+      }
+
+      to{
+        opacity:1;
+      }
+
+    }
+
+    /* 페이지 전환 */
+
+    .page-out{
+      animation:pageOut .6s ease forwards;
+    }
+
+    @keyframes pageOut{
+
+      to{
+        opacity:0;
+        transform:scale(1.03);
+        filter:blur(10px);
+      }
+
+    }
+
+    /* 모바일 */
+
+    @media(max-width:768px){
+
+      .logo{
+        top:26px;
+        left:24px;
+
+        font-size:34px;
+      }
+
+      .sub{
+        top:74px;
+        left:26px;
+
+        font-size:11px;
+      }
+
+      .display-board{
+        width:240px;
+        font-size:14px;
+      }
+
+      .title{
+        font-size:15px;
+      }
+
+      .desc{
+        font-size:11px;
+      }
+
+      .board{
+        left:8%;
+        top:30%;
+
+        width:34%;
+        height:24%;
+      }
+
+      .bench{
+        left:18%;
+        bottom:13%;
+
+        width:40%;
+        height:18%;
+      }
+
+      .office{
+        right:3%;
+        top:25%;
+
+        width:34%;
+        height:42%;
+      }
+
+      .bottom-message{
+        width:100%;
+        text-align:center;
+        font-size:11px;
+        bottom:18px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- 배경 -->
+
+  <div class="background"></div>
+
+  <div class="overlay"></div>
+
+  <!-- 로고 -->
+
+  <div class="logo">
+    夕停<span class="dot">.</span>
+  </div>
+
+  <!-- 서브 -->
+
+  <div class="sub">
+    막차가 지나간 뒤에도, 정류장은 남아있습니다
+  </div>
+
+  <!-- 전광판 -->
+
+  <div class="display-board" id="displayText">
+    오늘도 조용한 노을이 이어지고 있습니다.
+  </div>
+
+  <!-- 게시판 -->
+
+  <div
+    class="hotspot board"
+    onclick="movePage('qna.html')"
+  >
+
+    <div class="label">
+      <div class="title">안내 게시판</div>
+      <div class="desc">Questions</div>
+    </div>
+
+  </div>
+
+  <!-- 벤치 -->
+
+  <div
+    class="hotspot bench"
+    onclick="movePage('talk.html')"
+  >
+
+    <div class="label">
+      <div class="title">대합실 벤치</div>
+      <div class="desc">Free Talk</div>
+    </div>
+
+  </div>
+
+  <!-- 창구 -->
+
+  <div
+    class="hotspot office"
+    onclick="movePage('login.html')"
+  >
+
+    <div class="label">
+      <div class="title">승차 창구</div>
+      <div class="desc">Login</div>
+    </div>
+
+  </div>
+
+  <!-- 하단 문구 -->
+
+  <div class="bottom-message">
+    벤치에는 아직 누군가의 온기가 남아있습니다
+  </div>
+
+  <script>
+
+    const messages = [
+
+      "오늘도 조용한 노을이 이어지고 있습니다.",
+
+      "정류장은 언제나 열려있습니다.",
+
+      "잠시 머물러 가셔도 괜찮습니다.",
+
+      "오늘의 마지막 열차는 아직 떠나지 않았습니다.",
+
+      "누군가는 아직 이 벤치에 앉아있습니다.",
+
+      "창밖에는 잔잔한 파도 소리가 들립니다."
+
+    ];
+
+    const display =
+    document.getElementById("displayText");
+
+    setInterval(()=>{
+
+      const random =
+      messages[Math.floor(Math.random()*messages.length)];
+
+      display.style.opacity = "0";
+
+      setTimeout(()=>{
+
+        display.innerText = random;
+        display.style.opacity = "1";
+
+      },400);
+
+    },5000);
+
+    function movePage(url){
+
+      document.body.classList.add("page-out");
+
+      setTimeout(()=>{
+
+        location.href = url;
+
+      },500);
+
+    }
+
+  </script>
+
+</body>
+</html>
